@@ -89,10 +89,10 @@ const generateAuthToken = function(userData) {
         {
             userId: User._id.toString(),
             email: User.email,
-            iat: Math.floor(Date.now() / 1000), //issue date
-            exp: Math.floor(Date.now() / 1000) + 60*60 //expiry date
+            // iat: Math.floor(Date.now() / 1000), //issue date
+            // exp: Math.floor(Date.now() / 1000) + 60*60 //expiry date
         },
-        "Book-Managment",
+        "Book-Managment", { expiresIn: '30m' }
        
     );
     return token

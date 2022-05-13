@@ -1,5 +1,6 @@
 const usermodel = require("../models/usermodel");
 const bookmodel = require("../models/bookmodel")
+const reviewmodel= require("../models/reviewmodel")
 const mongoose = require("mongoose")
 
 const createBooks = async (req, res) => {
@@ -125,7 +126,7 @@ const getreview = async (req, res) => {
         });
     }
       let data = getBook._doc;
-      data.reviewsData= [];
+      data.reviewsData= await reviewmodel.find()
 
       res.status(200).send({status:true, msg:"booklist", data:data})
 
