@@ -7,7 +7,7 @@ const createUser = async (req, res) => {
         let nameRegex = /[a-zA-Z]/
         let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
         let mobileRegex = /^(?:(?:\+|0{0,2})91(\s*|[\-])?|[0]?)?([6789]\d{2}([ -]?)\d{3}([ -]?)\d{4})$/
-        let passwordRegex = /^[a-zA-Z0-9!@#$%^&*]{6,16}$/
+        let passwordRegex = /^[a-zA-Z0-9!@#$%^&*]{8,15}$/
 
         let data = req.body
         const {title, name,email, phone, password,address} = data
@@ -89,8 +89,7 @@ const generateAuthToken = function(userData) {
         {
             userId: User._id.toString(),
             email: User.email,
-            // iat: Math.floor(Date.now() / 1000), //issue date
-            // exp: Math.floor(Date.now() / 1000) + 60*60 //expiry date
+            
         },
         "Book-Managment", { expiresIn: '30m' }
        
@@ -120,11 +119,6 @@ const userLogin = async (req, res) =>{
        res.status(400).send("invalid login Detailes")
     }
 }
-
-
-
-
-
 
 module.exports.createUser = createUser
 module.exports.userLogin = userLogin
