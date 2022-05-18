@@ -20,6 +20,6 @@ router.delete("/books/:bookId",middleware.loginCheck, bookController.deleteBook)
 
 //================review API route handler====================//===================================//=================================//
 router.post("/books/:bookId/review",reviewController.addReviews)
-router.put("/books/:bookId/review/:reviewId",reviewController.updatereview)
+router.put("/books/:bookId/review/:reviewId",reviewController.updateReviewById)
 router.delete("/books/:bookId/review/:reviewId",reviewController.deletereview)
 module.exports = router;

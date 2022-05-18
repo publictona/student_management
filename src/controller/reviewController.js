@@ -46,53 +46,42 @@ const addReviews = async function (req, res) {
 
 ////===================================UPDATR REVIEW ========================================================================//
 
-const updatereview = async (req, res) => {
+
+const updateReviewById = async function (req, res) {
     try {
-        let bookId = req.params.bookId
-        let reviewId = req.params.reviewId
-        let requestBody = req.body;
-       const { review, rating , reviewedBy} = requestBody;
-       
-       
-    if(!Object.keys(requestBody).length) return res.status(400).send({ status: false, message: "Data is required to update document" });
-
-   
-    if (!mongoose.isValidObjectId(bookId)) {
-   return res.status(400).send({ status: false, msg: " Plz Enter valid bookId and retry it must be 24 character id" })}
-
-    
-    if (!mongoose.isValidObjectId(reviewId)) {
-    return res.status(400).send({ status: false, msg: " Plz Enter valid reviewId and retry it must be 24 character id" })}
-    
-       let isDeletedReview = await reviewmodel.findOne({ _id: reviewId, isDeleted: true })
-        if (isDeletedReview) {
-            return res.status(400).send({ satus: false, msg: "The review has already been deleted" })
+        let data = req.params.bookId;
+        let data1 = req.params.reviewId;
+        let updateData = req.body
+        if (Object.keys(updateData).length == 0) return res.status(400).send({ staus: false, message: "Invalid request. Please provide Details in body and update" })
+        if(!data){
+            return res.status(400).send({ status: false, message: "plz provide bookid in params" })
+        }
+        if(!data1){
+            return res.status(400).send({ status: false, message: "plz provide reviewid in params" })
         }
 
-      
-        let updatedBook = await bookmodel.findById(bookId)
-        updatedBook.reviewsData = await reviewmodel.find({bookId, isDeleted:false},{isDeleted:0,createdAt:0, updatedAt:0 })
-        res.status(200).send({status:true, msg :"Book list",data:updatedBook})     
+        
+        if (mongoose.Types.ObjectId.isValid(data) == false) {
+            return res.status(400).send({ status: false, message: "Invalid book id" })
+        }
 
-         const updatedTheReview = await reviewmodel.findOneAndUpdate(
-                    { _id: req.params.reviewId },
-                    {
-                        review: review,
-                        rating: rating,
-                        reviewedBy: reviewedBy,
-                         reviewedAt: Date.now()
-            
-                    },
-                    { new: true }
-                  );
+        if (mongoose.Types.ObjectId.isValid(data1) == false) {
+            return res.status(400).send({ status: false, message: "Invalid review id" })
+    
+        }
 
-        res.status(200).send({ status: true, message: "Success", data: updatedTheReview })
+        const { review, rating, reviewedBy } = updateData
+        let book1 = await bookmodel.findOne({ _id: data }, { isDeleted: false });
+        if (!book1) return res.status(404).send({ status: false, message: 'Book Not Found' })
 
-         
+        let book = await reviewmodel.findOneAndUpdate({ _id: data1 ,bookId:data,  isDeleted: false  }, { review: review, rating: rating, reviewedBy: reviewedBy }, { new: true });
+        if (!book) return res.status(404).send({ status: false, message: 'Book Not Found' })
 
-    } catch (err) {
-        console.log(err)
-        res.status(500).send({ status: false, error: err.message });
+        return res.status(200).send({ status: true, message: 'Success', data: book });
+        
+    }
+    catch (err) {
+        return res.status(500).send({ status: false, message: err.message })
     }
 }
 
@@ -150,5 +139,4 @@ module.exports.addReviews=addReviews
 
 module.exports. deletereview=  deletereview
 
-module.exports.updatereview =updatereview
-
+module.exports.updateReviewById =updateReviewById
