@@ -1,5 +1,5 @@
 const jwt= require("jsonwebtoken")
-const secretKey= "Book-Managment"
+const secretKey= "Student-Managment"
 
 
 const loginCheck = async function(req, res, next) {
@@ -16,7 +16,7 @@ const loginCheck = async function(req, res, next) {
             return res.status(403).send({ status: false, message: `Invalid authentication token in request` })
         }
 
-        req.userId= decoded.userId
+        req.studentId= decoded.studentId
         //res.setHeader("x-api-key", token)
         next()
     } catch (error) {
