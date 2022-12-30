@@ -25,7 +25,6 @@ const generateAuthToken = function (userData) {
 
     },
     "Student-Managment",
-
   );
   return token
 }
@@ -39,7 +38,7 @@ const Login = async (req, res) => {
 
     const studentData = await studentmodel.findOne({ email: email, password: password });
     if (!studentData)
-      return res.status(401).send({ status: false, msg: "Either username or the password is incorrect" })
+      return res.status(401).send({ status: false, msg: "Either email or the password is incorrect" })
     if (studentData) {
       const token = generateAuthToken(studentData);
       res.setHeader('X-api-key', token)
@@ -100,9 +99,10 @@ const updateStudent = async (req, res) => {
     if (!Object.keys(data).length) return res.status(400).send({ status: false, message: "Data is required to update document" });
 
     ///=====================authorization =================//
-    if (checkstudentId.userId != req.studentId) {
-      return res.status(400).send({ status: false, message: 'you have no Unauthorised to update this data Access.' });
+    if (req.studentId != studentId) {
+      return res.status(403).send({ status: false, message: "You're not Authorized" });
     }
+
     //----------------------------------------------------------------------------------------------------------------------------------------//
     let updates = await studentmodel.findOneAndUpdate({ _id: studentId }, data, { new: true })
     return res.status(200).send({ status: true, data: updates })
@@ -121,17 +121,12 @@ const deleteStudent = async (req, res) => {
     if (!studentId) return res.status(400).send({ status: false, msg: "student Id not found" })
 
     // ******Authoorization check *********************//
-    if (deleteStudent.studentId !== req.studentId) {
-      //------------------------------------------------------------------------------------------------------------------//
-      return res.status(403).send({
-        status: false,
-        message: 'you have no Unauthorised to Delete this data Access.',
-      });
+    if (req.studentId != studentId) {
+      return res.status(403).send({ status: false, message: "You're not Authorized" });
     }
 
     let deletestudent = await studentmodel.deleteOne({ _id: studentId }, { new: true })
     return res.status(200).send({ status: true, msg: "document deleted successfully" })
-
 
   } catch (error) {
     console.log(error)
